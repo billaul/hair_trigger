@@ -12,7 +12,9 @@ module HairTrigger
     def initialize(name = nil, options = {})
       @adapter = options[:adapter]
       @compatibility = options.delete(:compatibility) || self.class.compatibility
-      @options = {}
+      @options = {
+        join_parts_with: 'AND'
+      }
       @chained_calls = []
       @errors = []
       @warnings = []
@@ -82,6 +84,11 @@ module HairTrigger
       options[:of] = columns
     end
 
+    def join_parts_with(with)
+      raise DeclarationError, "`join_parts_with' value is invalid" unless with.in?(%w[OR AND])
+      options[:join_parts_with] = with
+    end
+    
     def old_as(table)
       raise DeclarationError, "`old_as' requested, but no table_name specified" unless table.present?
       options[:referencing] ||= {}
@@ -194,7 +201,7 @@ module HairTrigger
       parts << options[:of].map{ |col| change_clause(col) }.join(" OR ") if options[:of] && !supports_of?
       if parts.present?
         parts.map!{ |part| "(" + part + ")" } if parts.size > 1
-        @prepared_where = parts.join(" AND ")
+        @prepared_where = parts.join(" #{options[:join_parts_with]} ")
       end
     end
 
