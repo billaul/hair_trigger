@@ -178,7 +178,7 @@ module HairTrigger
         METHOD
       end
     end
-    chainable_methods :name, :on, :for_each, :before, :after, :where, :security, :timing, :events, :all, :nowrap, :of, :declare, :old_as, :new_as
+    chainable_methods :name, :on, :for_each, :before, :after, :where, :join_parts_with, :security, :timing, :events, :all, :nowrap, :of, :declare, :old_as, :new_as
 
     def create_grouped_trigger?
       HairTrigger.hair_trigger_config.mysql_adapters.include?(adapter_name)
@@ -322,7 +322,9 @@ module HairTrigger
           when :on
             "on(#{options[:table].inspect})"
           when :where
-            "where(#{prepared_where.inspect})"
+            "where(#{@explicit_where.inspect})"
+          when :join_parts_with
+            "join_parts_with(#{option[:join_parts_with].inspect})"
           when :of
             "of(#{options[:of].inspect[1..-2]})"
           when :old_as
