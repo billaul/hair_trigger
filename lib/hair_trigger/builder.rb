@@ -324,7 +324,7 @@ module HairTrigger
           when :where
             "where(#{@explicit_where.inspect})"
           when :join_parts_with
-            "join_parts_with(#{option[:join_parts_with].inspect})"
+            "join_parts_with(#{options[:join_parts_with].inspect})"
           when :of
             "of(#{options[:of].inspect[1..-2]})"
           when :old_as
